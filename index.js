@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { NormalModuleReplacementPlugin } = require('webpack');
+const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
 
 const entryPointNames = ['forum', 'admin'];
 const entryPointExts = ['js', 'ts'];
@@ -27,33 +27,12 @@ function getEntryPoints() {
 }
 
 const useBundleAnalyzer = process.env.ANALYZER === 'true';
-const plugins = [];
-
-/**
- * Yarn Plug'n'Play means that dependency hoisting doesn't work like it normally
- * would with the standard `node_modules` configuration. This is by design, as
- * hoisting is unpredictable.
- *
- * This plugin works around this by ensuring references to `@babel/runtime` (which
- * is required at build-time from an extension/core's scope) are redirected to the
- * copy of `@babel/runtime` which is a dependency of this package.
- *
- * This removes the need for hoisting, and allows for Plyug'n'Play compatibility.
- *
- * Thanks goes to Yarn's lead maintainer @arcanis for helping me get to this
- * solution.
- */
-plugins.push(
-  new NormalModuleReplacementPlugin(/^@babel\/runtime(.*)/, (resource) => {
-    const path = resource.request.split('@babel/runtime')[1];
-
-    resource.request = require.resolve(`@babel/runtime${path}`);
+const plugins = [
+  (useBundleAnalyzer && process.env.RSDOCTOR) &&
+  new RsdoctorRspackPlugin({
+    // options (?)
   })
-);
-
-if (useBundleAnalyzer) {
-  plugins.push(new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)());
-}
+];
 
 module.exports = function (options = {}) {
   return {
@@ -61,7 +40,7 @@ module.exports = function (options = {}) {
     // if they exist.
     entry: getEntryPoints(),
 
-    plugins,
+    plugins: plugins.filter(Boolean),
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
@@ -73,8 +52,30 @@ module.exports = function (options = {}) {
           // Matches .js, .jsx, .ts, .tsx
           // See: https://regexr.com/5snjd
           test: /\.[jt]sx?$/,
-          loader: require.resolve('babel-loader'),
-          options: require('./babel.config'),
+          // can't transform into builtin:swc-loader due to babel plugins
+          loader: 'builtin:swc-loader',
+          options: {
+            jsc: {
+              parser: {
+                syntax: 'ecmascript',
+                jsx: true,
+                classPrivateMethods: true,
+                classPrivateFields: true,
+                classProperties: true,
+              },
+              externalHelpers: true,
+              transform: {
+                react: {
+                  runtime: "automatic",
+                  pragma: 'React.createElement',
+                  pragmaFrag: 'React.Fragment',
+                  throwIfNamespace: true,
+                  development: false,
+                  useBuiltins: false,
+                },
+              },
+            },
+          },
           resolve: {
             fullySpecified: false,
           },

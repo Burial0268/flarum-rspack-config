@@ -1,20 +1,32 @@
-# Webpack config for Flarum JS/TS compilation
+# Rspack config for Flarum JS/TS compilation
 
-This package generates a [Webpack](https://webpack.js.org) config object that will compile JavaScript for use in Flarum.
+This package generates a [Rsbpack](https://rspack.dev) config object that will compile JavaScript for use in Flarum.
 
 ## Usage
 
-**webpack.config.js**
+**rspack.config.js**
 
 ```js
-var config = require('flarum-webpack-config');
+var config = require('flarum-rspack-config');
 
 module.exports = config(options);
 ```
 
+**package.json**
+```json
+{
+  "scripts": {
+-   "dev": "webpack --mode development --watch",
+-   "build": "webpack --mode production",
++   "dev": "rspack --mode development --watch",
++   "build": "rspack --mode production",
+  }
+}
+```
+
 To merge in custom Webpack config options, use [webpack-merge](https://www.npmjs.com/package/webpack-merge).
 
-### Webpack Bundle Analyzer
+### Rspack Bundle Analyzer
 
 You can view a visual representation of your JS Bundle by building with Webpack Bundle Analyzer.
 
@@ -48,7 +60,7 @@ For example, to access the Tags extension module within your extension:
 import { Tag } from '@flarum/tags/forum';
 ```
 
-**webpack.config.js**
+**rspack.config.js**
 
 ```js
 module.exports = config({
