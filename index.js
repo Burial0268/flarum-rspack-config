@@ -40,7 +40,7 @@ module.exports = function (options = {}) {
     // if they exist.
     entry: getEntryPoints(),
 
-    plugins: plugins.filter(Boolean),
+    plugins: plugins,
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
