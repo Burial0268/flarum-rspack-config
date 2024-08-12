@@ -1,6 +1,6 @@
 {
   "name": "flarum-rspack-config",
-  "version": "1.1.1",
+  "version": "1.1.1.1",
   "description": "Rspack config for Flarum JS and TS transpilation.",
   "main": "index.js",
   "author": "GBCLStudio",
@@ -9,6 +9,7 @@
     "@babel/core": "^7.25.2",
     "@babel/plugin-transform-react-jsx": "^7.25.2",
     "@babel/plugin-transform-runtime": "^7.24.7",
+    "@babel/preset-env": "^7.25.3",
     "@babel/preset-react": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
     "@babel/runtime": "^7.25.0",
