@@ -1,6 +1,6 @@
 {
   "name": "flarum-rspack-config",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Rspack config for Flarum JS and TS transpilation.",
   "main": "index.js",
   "author": "GBCLStudio",
