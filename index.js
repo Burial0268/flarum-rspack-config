@@ -49,36 +49,50 @@ module.exports = function (options = {}) {
     module: {
       rules: [
         {
-          // Matches .js, .jsx, .ts, .tsx
-          // See: https://regexr.com/5snjd
-          test: /\.[jt]sx?$/,
-          // can't transform into builtin:swc-loader due to babel plugins
-          loader: 'builtin:swc-loader',
-          options: {
-            jsc: {
-              parser: {
-                syntax: 'ecmascript',
-                jsx: true,
-                classPrivateMethods: true,
-                classPrivateFields: true,
-                classProperties: true,
-              },
-              externalHelpers: true,
-              transform: {
-                react: {
-                  runtime: "automatic",
-                  pragma: 'React.createElement',
-                  pragmaFrag: 'React.Fragment',
-                  throwIfNamespace: true,
-                  development: false,
-                  useBuiltins: false,
+          test: /\.(j|t)s$/,
+          use: {
+            loader: 'builtin:swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'typescript',
+                },
+                transform: {
+                  react: {
+                    runtime: "automatic",
+                    development: false,
+                    useBuiltins: false,
+                  },
                 },
               },
             },
           },
-          resolve: {
-            fullySpecified: false,
-          },
+          type: 'javascript/auto',
+        },
+        {
+          test: /\.(j|t)sx$/,
+          use: [{
+            loader: 'builtin:swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'typescript',
+                  tsx: true,
+                },
+                transform: {
+                  react: {
+                    runtime: "automatic",
+                    development: false,
+                    useBuiltins: true,
+                  },
+                },
+              },
+              externalHelpers: true,
+            },
+          }, {
+            loader: "babel-loader",
+            options: require('./babel.config.cjs'),
+          }],
         },
       ],
     },
